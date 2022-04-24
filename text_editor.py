@@ -1,12 +1,11 @@
 from tkinter import *
-from tkinter import filedialog
 import os
 
 root = Tk()
 root.title("Bookster")
 #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
 #root.geometry("%dx%d+0+0" % (w, h))
-#root.geometry("1200x700+200+150")
+root.geometry("1200x700+200+150")
 
 global if_open_file
 if_open_file = False
@@ -69,7 +68,8 @@ def save_file_as():
         text_file.write(text_box(1.0, END))
         
         text_file.close
-        
+
+# Copy function
 def copy_text(shortcut):
     global copied_text
     
@@ -81,6 +81,7 @@ def copy_text(shortcut):
         root.clipboard_clear()
         root.clipboard_append(copied_text)
 
+# Paste function
 def paste_text(shortcut):
     global copied_text
     
@@ -91,6 +92,7 @@ def paste_text(shortcut):
             cursor = text_box.index(INSERT)
             text_box.insert(cursor, copied_text)
 
+# Cut function
 def cut_text(shortcut):
     global copied_text
     
@@ -104,22 +106,43 @@ def cut_text(shortcut):
             root.clipboard_clear()
             root.clipboard_append(copied_text)
 
+# Make text bold
+def bold_text():
+    return
+
+# Make text italic
+def italic_text():
+    return
+
+# Underline text
+def underscore_text():
+    return
+
+# Toolbar
+tools_frame = Frame(root, bg = "#FCF5E2")
+tools_frame.pack(fill = X)
+
 # Textbox frame
-
 text_frame = Frame(root)
-text_frame.pack(pady = 10)
+text_frame.place(x = 30, y = 30)
 
-#Scrollbar
+# Widget frame
+widget_frame = Frame(root, bg = "#FFFFFF")
+widget_frame.pack(side = "right", fill = Y)
 
+#Scrollbar for text
 scroll_bar = Scrollbar(text_frame)
 scroll_bar.pack(side = RIGHT, fill = Y)
 
-# Text box
+#Scrollbar for widget frame
+scroll_widget = Scrollbar(widget_frame)
+scroll_widget.pack(side = RIGHT, fill = Y)
 
-text_box = Text(text_frame, width = 90, height = 55, font = ("Helvetica", 10),
+# Text box
+text_box = Text(text_frame, width = 90, height = 55, font = ("Helvetica", 12),
                 selectbackground = "#FCF5E2", selectforeground = "black",
                 undo = True, yscrollcommand = scroll_bar.set)
-text_box.pack()
+text_box.pack(pady = 5)
 
 scroll_bar.config(command = text_box.yview)
 
@@ -146,18 +169,24 @@ edit_menu.add_command(label = "Cut    Ctrl+X", command = lambda: cut_text(False)
 edit_menu.add_command(label = "Undo   Ctrl+Z")
 edit_menu.add_command(label = "Redo   Ctrl+Y")
 
-# Key bindings gor Copy-Paste-Cut-Print-Exit
-root.bind("<Control-x>", cut_text)
-root.bind("<Control-c>", copy_text)
-root.bind("<Control-v>", paste_text)
-
 # Status bar
 status_bar = Label(root, text = f"Writing goal 5000/10000 50%", anchor = S)
 status_bar.pack(fill = X, side = BOTTOM, ipady = 5)
 
+# Toolbar buttons and widgets
+bold = Button(tools_frame, text = "  B  ", command = bold_text)
+bold.grid(row = 0, column = 0, padx = 5, sticky = W)
+
+italic = Button(tools_frame, text = "  I  ", command = italic_text)
+italic.grid(row = 0, column = 2, padx = 5)
+
+underscore = Button(tools_frame, text = "  U  ", command = underscore_text)
+underscore.grid(row = 0, column = 4, padx = 5)
+
+
+# Key bindings for Copy-Paste-Cut-Print-Exit
+root.bind("<Control-x>", cut_text)
+root.bind("<Control-c>", copy_text)
+root.bind("<Control-v>", paste_text)
 
 root.mainloop()
-
-
-
-
