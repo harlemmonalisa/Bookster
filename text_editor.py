@@ -4,7 +4,6 @@ from tkinter import ttk
 from tkinter import font
 import os
 
-
 window = Tk()
 window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
@@ -109,6 +108,10 @@ def cut_text(shortcut):
             text_box.delete("sel.first", "sel.last")
             window.clipboard_clear()
             window.clipboard_append(copied_text)
+            
+# Function for printing a text file             
+def print_file():
+    pass
 
 # Make text bold
 def bold_text():
@@ -151,12 +154,13 @@ def underscore_text():
         text_box.tag_remove("underline", "sel.first", "sel.last")
     else:
         text_box.tag_add("underline", "sel.first", "sel.last")
+        
 
 def open_character():
     pass
 
 def open_location():
-    pass
+    import Location_sheet
 
 
 # Toolbar
@@ -200,9 +204,9 @@ file_menu = Menu(menu_tab, tearoff = False)
 menu_tab.add_cascade(label = "File", menu = file_menu)
 file_menu.add_command(label = "New", command = create_file)
 file_menu.add_command(label = "Open", command = open_file)
-file_menu.add_command(label = "Save", command = save_file)
+file_menu.add_command(label = "Save text file", command = save_file)
 file_menu.add_command(label = "Save as", command = save_file_as)
-file_menu.add_command(label = "Print")
+file_menu.add_command(label = "Print", command = print_file)
 file_menu.add_command(label = "Exit", command = window.destroy)
 
 # Edit
