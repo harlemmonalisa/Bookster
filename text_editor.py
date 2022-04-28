@@ -214,23 +214,28 @@ directory = os.getcwd()
 clicked_char = StringVar()
 clicked_loc = StringVar()
 
-for file in os.listdir(directory):
-    if file.endswith(".txt") and file.startswith("char_"):
-        char_name = file.strip("char_").strip(".txt")
-        characters.append(char_name)
-        clicked_char.set(char_name)
+try:
+    for file in os.listdir(directory):
+        if file.endswith(".txt") and file.startswith("char_"):
+            char_name = file.strip("char_").strip(".txt")
+            characters.append(char_name)
+            clicked_char.set(char_name)
+        character_dropbox = OptionMenu(widget_frame, clicked_char, *characters)
 
-for file in os.listdir(directory):
-    if file.endswith(".txt") and file.startswith("loc_"):
-        loc_name = file.strip("loc_").strip(".txt")
-        locations.append(loc_name)
-        clicked_loc.set(loc_name)
+    for file in os.listdir(directory):
+        if file.endswith(".txt") and file.startswith("loc_"):
+            loc_name = file.strip("loc_").strip(".txt")
+            locations.append(loc_name)
+            clicked_loc.set(loc_name)
+        loc_dropbox = OptionMenu(widget_frame, clicked_loc, *locations)
+except:
+    character_dropbox = OptionMenu(widget_frame, clicked_char, "No characters")
+    loc_dropbox = OptionMenu(widget_frame, clicked_loc, "No locations")
+    clicked_char.set("No characters")
+    clicked_loc.set("No locations")
 
 char_label = Label(text = "Character: ")
-character_dropbox = OptionMenu(widget_frame, clicked_char, *characters)
-
 loc_label = Label(text = "Location: ")
-loc_dropbox = OptionMenu(widget_frame, clicked_loc, *locations)
 
 character_dropbox.place(x = 100, y = 760)
 loc_dropbox.place(x = 100, y = 790)
