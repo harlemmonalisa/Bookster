@@ -2,7 +2,9 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import font
+from file_actions import *
 import os
+import subprocess
 
 window = Tk()
 window.title("Bookster")
@@ -10,10 +12,6 @@ w, h = window.winfo_screenwidth(), window.winfo_screenheight()
 window.geometry('%dx%d+%d+%d' % (w-10, h-95, 0, 0))
 window.configure(bg = "#f2f0f7")
 #window.attributes("-fullscreen", True)
-
-
-global if_open_file
-if_open_file = False
 
 global copied_text
 copied_text = False
@@ -25,54 +23,6 @@ def create_file():
     
     global if_open_file
     if_open_file = False
-
-# Open a file
-def open_file():
-    text_box.delete(1.0, END)
-    
-    text_file = filedialog.askopenfilename(initialdir="Documents")
-    
-    #Check if some file is open
-    if text_file:
-        global if_open_file
-        if_open_file = text_file
-        
-    name = os.path.basename(text_file)
-    window.title(name + " - Bookster")
-    
-    
-    text_file = open(text_file, 'r')
-    read_file = text_file.read()
-    
-    text_box.insert(END, read_file)
-    text_file.close
-
-# Save file
-def save_file():
-    global if_open_file
-    
-    if  if_open_file:
-        text_file = open(if_open_file, 'w')
-        text_file.write(text_box.get(1.0, END))
-        #window.title(name + " File saved - Bookster")
-        
-        text_file.close
-    else:
-        save_file_as()
-    
- 
-# Save file as
-def save_file_as():
-    text_file = filedialog.asksaveasfilename(initialdir="Documents", defaultextension=".txt", title = "Save file")
-    
-    if text_file:
-        name = os.path.basename(text_file)
-        window.title(name + " File saved - Bookster")
-        
-        text_file = open(text_file, 'w')
-        text_file.write(text_box(1.0, END))
-        
-        text_file.close
 
 # Copy function
 def copy_text(shortcut):
@@ -162,7 +112,8 @@ def open_character():
     pass
 
 def open_location():
-    import Location_sheet
+    subprocess.call(["python", "Location_sheet.py"])
+    
 
 
 # Toolbar
