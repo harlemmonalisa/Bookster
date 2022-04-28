@@ -129,6 +129,7 @@ widget_frame.pack(side = "right", fill = Y)
 scroll_widget = Scrollbar(widget_frame)
 scroll_widget.pack(side = RIGHT, fill = Y)
 
+#scroll_widget.config(command = widget_frame.yview)
 
 #Heading
 l1 = Label(root, text="Location form",width=25,font=("times",20,"bold"),fg='black')

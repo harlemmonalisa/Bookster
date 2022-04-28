@@ -1,11 +1,15 @@
 from tkinter import *
+from tkinter import filedialog
+from tkinter import ttk
+from tkinter import font
 import os
 
-root = Tk()
-root.title("Bookster")
-#w, h = root.winfo_screenwidth(), root.winfo_screenheight()
-#root.geometry("%dx%d+0+0" % (w, h))
-root.geometry("1200x700+200+150")
+
+window = Tk()
+window.title("Bookster")
+w, h = window.winfo_screenwidth(), window.winfo_screenheight()
+window.geometry("%dx%d" % (w, h))
+#window.geometry("1200x700+200+150")
 
 global if_open_file
 if_open_file = False
@@ -16,7 +20,7 @@ copied_text = False
 # Function to create new file
 def create_file():
     text_box.delete(1.0, END)
-    root.title("New file - Bookster")
+    window.title("New file - Bookster")
     
     global if_open_file
     if_open_file = False
@@ -33,7 +37,7 @@ def open_file():
         if_open_file = text_file
         
     name = os.path.basename(text_file)
-    root.title(name + " - Bookster")
+    window.title(name + " - Bookster")
     
     
     text_file = open(text_file, 'r')
@@ -49,7 +53,7 @@ def save_file():
     if  if_open_file:
         text_file = open(if_open_file, 'w')
         text_file.write(text_box.get(1.0, END))
-        #root.title(name + " File saved - Bookster")
+        #window.title(name + " File saved - Bookster")
         
         text_file.close
     else:
@@ -62,7 +66,7 @@ def save_file_as():
     
     if text_file:
         name = os.path.basename(text_file)
-        root.title(name + " File saved - Bookster")
+        window.title(name + " File saved - Bookster")
         
         text_file = open(text_file, 'w')
         text_file.write(text_box(1.0, END))
@@ -74,19 +78,19 @@ def copy_text(shortcut):
     global copied_text
     
     if shortcut:
-        copied_text = root.clipboard_get()
+        copied_text = window.clipboard_get()
         
     if text_box.selection_get():
         copied_text = text_box.selection_get()
-        root.clipboard_clear()
-        root.clipboard_append(copied_text)
+        window.clipboard_clear()
+        window.clipboard_append(copied_text)
 
 # Paste function
 def paste_text(shortcut):
     global copied_text
     
     if shortcut:
-        copied_text = root.clipboard_get()
+        copied_text = window.clipboard_get()
     else:
         if copied_text:
             cursor = text_box.index(INSERT)
@@ -97,46 +101,79 @@ def cut_text(shortcut):
     global copied_text
     
     if shortcut:
-        copied_text = root.clipboard_get()
+        copied_text = window.clipboard_get()
     else:
             
         if text_box.selection_get():
             copied_text = text_box.selection_get()
             text_box.delete("sel.first", "sel.last")
-            root.clipboard_clear()
-            root.clipboard_append(copied_text)
+            window.clipboard_clear()
+            window.clipboard_append(copied_text)
 
 # Make text bold
 def bold_text():
-    return
+    bold_text = font.Font(text_box, text_box.cget("font"))
+    bold_text.configure(weight = "bold")
+    
+    text_box.tag_configure("bold", font = bold_text)
+    
+    current_tags = text_box.tag_names("sel.first")
+    
+    if "bold" in current_tags:
+        text_box.tag_remove("bold", "sel.first", "sel.last")
+    else:
+        text_box.tag_add("bold", "sel.first", "sel.last")
 
 # Make text italic
 def italic_text():
-    return
+    italic_text = font.Font(text_box, text_box.cget("font"))
+    italic_text.configure(slant = "italic")
+    
+    text_box.tag_configure("italic", font = italic_text)
+    
+    current_tags = text_box.tag_names("sel.first")
+    
+    if "italic" in current_tags:
+        text_box.tag_remove("italic", "sel.first", "sel.last")
+    else:
+        text_box.tag_add("italic", "sel.first", "sel.last")
 
 # Underline text
 def underscore_text():
-    return
+    underline_text = font.Font(text_box, text_box.cget("font"))
+    underline_text.configure(underline = 1)
+    
+    text_box.tag_configure("underline", font = underline_text)
+    
+    current_tags = text_box.tag_names("sel.first")
+    
+    if "underline" in current_tags:
+        text_box.tag_remove("underline", "sel.first", "sel.last")
+    else:
+        text_box.tag_add("underline", "sel.first", "sel.last")
+
+def open_character():
+    pass
+
+def open_location():
+    pass
+
 
 # Toolbar
-tools_frame = Frame(root, bg = "#FCF5E2")
+tools_frame = Frame(window, bg = "#FCF5E2")
 tools_frame.pack(fill = X)
 
 # Textbox frame
-text_frame = Frame(root)
+text_frame = Frame(window, width = 2480, height = 3508)
 text_frame.place(x = 30, y = 30)
 
 # Widget frame
-widget_frame = Frame(root, bg = "#FFFFFF")
-widget_frame.pack(side = "right", fill = Y)
+widget_frame = Frame(window, width = 2480, padx = 50, pady = 50)
+widget_frame.place(x = 870, y = 30)
 
 #Scrollbar for text
 scroll_bar = Scrollbar(text_frame)
 scroll_bar.pack(side = RIGHT, fill = Y)
-
-#Scrollbar for widget frame
-scroll_widget = Scrollbar(widget_frame)
-scroll_widget.pack(side = RIGHT, fill = Y)
 
 # Text box
 text_box = Text(text_frame, width = 90, height = 55, font = ("Helvetica", 12),
@@ -145,10 +182,18 @@ text_box = Text(text_frame, width = 90, height = 55, font = ("Helvetica", 12),
 text_box.pack(pady = 5)
 
 scroll_bar.config(command = text_box.yview)
+#scroll_widget.config(command = widget_frame.yview)
+
+# Widget side
+character_button = Button(widget_frame, text = "Character sheets", command = open_character)
+character_button.pack(padx = 5, pady = 5)
+
+location_button = Button(widget_frame, text = "Location sheets", command = open_location, padx = 4)
+location_button.pack(padx = 5, pady = 5)
 
 # Menu
-menu_tab = Menu(root)
-root.config(menu = menu_tab)
+menu_tab = Menu(window)
+window.config(menu = menu_tab)
 
 # File
 file_menu = Menu(menu_tab, tearoff = False)
@@ -158,7 +203,7 @@ file_menu.add_command(label = "Open", command = open_file)
 file_menu.add_command(label = "Save", command = save_file)
 file_menu.add_command(label = "Save as", command = save_file_as)
 file_menu.add_command(label = "Print")
-file_menu.add_command(label = "Exit", command = root.destroy)
+file_menu.add_command(label = "Exit", command = window.destroy)
 
 # Edit
 edit_menu = Menu(menu_tab, tearoff = False)
@@ -170,7 +215,7 @@ edit_menu.add_command(label = "Undo   Ctrl+Z")
 edit_menu.add_command(label = "Redo   Ctrl+Y")
 
 # Status bar
-status_bar = Label(root, text = f"Writing goal 5000/10000 50%", anchor = S)
+status_bar = Label(window, text = f"Writing goal 5000/10000 50%", anchor = S)
 status_bar.pack(fill = X, side = BOTTOM, ipady = 5)
 
 # Toolbar buttons and widgets
@@ -185,8 +230,10 @@ underscore.grid(row = 0, column = 4, padx = 5)
 
 
 # Key bindings for Copy-Paste-Cut-Print-Exit
-root.bind("<Control-x>", cut_text)
-root.bind("<Control-c>", copy_text)
-root.bind("<Control-v>", paste_text)
+window.bind("<Control-x>", cut_text)
+window.bind("<Control-c>", copy_text)
+window.bind("<Control-v>", paste_text)
 
-root.mainloop()
+window.mainloop()
+
+
