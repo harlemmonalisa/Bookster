@@ -9,25 +9,42 @@ import subprocess
 window = Tk()
 window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
-window.geometry('%dx%d+%d+%d' % (w-10, h-95, 0, 0))
+window.geometry('%dx%d+%d+%d' % (w, h-95, 0, 0))
 window.configure(bg = "#f2f0f7")
 #window.attributes("-fullscreen", True)
 
 global copied_text
 copied_text = False
 
+# Function to open a file
+def open_file():
+    """Function that clears text box and displays contents of a newly chosen file. Default directory for files is set to Documents folder."""
+    text_box.delete(1.0, END)
+    
+    text_file = filedialog.askopenfilename(initialdir="Documents")
+        
+    name = os.path.basename(text_file)
+    window.title(name + " - Bookster")
+    
+    
+    text_file = open(text_file, 'r')
+    read_file = text_file.read()
+    
+    text_box.insert(END, read_file)
+    text_file.close
+
+
 # Function to create new file
 def create_file():
+    """Function to create a new file. It clears existing text from the text box."""
     text_box.delete(1.0, END)
     window.title("New file - Bookster")
-    
-    global if_open_file
-    if_open_file = False
 
 # Copy function
 def copy_text(shortcut):
-    global copied_text
+    """Function that allows copying selected text."""
     
+    # If user uses windows shortcuts - get copied text from the clipboard
     if shortcut:
         copied_text = window.clipboard_get()
         
@@ -38,8 +55,9 @@ def copy_text(shortcut):
 
 # Paste function
 def paste_text(shortcut):
-    global copied_text
+    """Function that allows pasting selected text."""
     
+    # If user uses windows shortcuts - get copied text from the clipboard
     if shortcut:
         copied_text = window.clipboard_get()
     else:
@@ -49,8 +67,9 @@ def paste_text(shortcut):
 
 # Cut function
 def cut_text(shortcut):
-    global copied_text
+    """Function that allows cutting selected text."""
     
+    # If user uses windows shortcuts - get copied text from the clipboard
     if shortcut:
         copied_text = window.clipboard_get()
     else:
@@ -61,12 +80,13 @@ def cut_text(shortcut):
             window.clipboard_clear()
             window.clipboard_append(copied_text)
             
-# Function for printing a text file             
+# Function for printing a text file on a printer - WIP            
 def print_file():
     pass
 
 # Make text bold
 def bold_text():
+    """Function that makes selected text bold or removes bold weight if the text was already bold."""
     bold_text = font.Font(text_box, text_box.cget("font"))
     bold_text.configure(weight = "bold")
     
@@ -81,6 +101,7 @@ def bold_text():
 
 # Make text italic
 def italic_text():
+    """Function that makes selected text italic or removes italic slant if the text was already italic."""
     italic_text = font.Font(text_box, text_box.cget("font"))
     italic_text.configure(slant = "italic")
     
@@ -95,6 +116,7 @@ def italic_text():
 
 # Underline text
 def underscore_text():
+    """Function that makes selected text underlined or removes it if the text was already underlined."""
     underline_text = font.Font(text_box, text_box.cget("font"))
     underline_text.configure(underline = 1)
     
@@ -107,11 +129,13 @@ def underscore_text():
     else:
         text_box.tag_add("underline", "sel.first", "sel.last")
         
-
-def open_character():
+# WIP
+def new_character():
     pass
 
-def open_location():
+# Function that executes upond New Location button press
+def new_location():
+    """Function that calls Location_sheet script upon button press."""
     subprocess.call(["python", "Location_sheet.py"])
     
 
@@ -121,7 +145,7 @@ tools_frame = Frame(window, bg = "#d9d2e9")
 tools_frame.pack(fill = X, pady = 5)
 
 # Textbox frame
-text_frame = Frame(window, width = 2480, height = 3508, pady = 10)
+text_frame = Frame(window, width = 2480, height = h - 400, pady = 10)
 text_frame.place(x = 30, y = 30)
 
 # Widget frame
@@ -142,10 +166,10 @@ scroll_bar.config(command = text_box.yview)
 #scroll_widget.config(command = widget_frame.yview)
 
 # Widget side
-character_button = Button(widget_frame, text = "Character sheets", command = open_character)
+character_button = Button(widget_frame, text = "New character", command = new_character)
 character_button.pack(padx = 5, pady = 5)
 
-location_button = Button(widget_frame, text = "Location sheets", command = open_location, padx = 4)
+location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3)
 location_button.pack(padx = 5, pady = 5)
 
 # Menu
@@ -172,8 +196,10 @@ edit_menu.add_command(label = "Undo   Ctrl+Z")
 edit_menu.add_command(label = "Redo   Ctrl+Y")
 
 # Status bar
-status_bar = Label(window, text = f"Writing goal 5000/10000 50%", anchor = S)
-status_bar.pack(fill = X, side = BOTTOM, ipady = 5)
+written = 10000 #placeholder value until functions are ready
+goal = 20000 #placeholder value until functions are ready
+status_bar = Label(window, bg = "#d9d2e9", text = f"Writing goal {written}/{goal} {written/goal*100}%", anchor = S)
+status_bar.pack(fill = X, side = BOTTOM)
 
 # Toolbar buttons and widgets
 bold = Button(tools_frame, text = "  B  ", command = bold_text)

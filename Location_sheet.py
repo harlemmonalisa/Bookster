@@ -7,7 +7,7 @@ import csv
 import xml.etree.ElementTree as gfg
 
 root = Tk()
-root.geometry('520x960')
+root.geometry('520x900+900+85')
 root.title("Location Sheet")
 
 #exporting entered data
@@ -287,10 +287,10 @@ e23.place(x=240,y=1530)
 
 
 # submit and cancel buttons
-b1 = Button(root, text='Submit',command=saveinfo,width=15,bg='green',fg='white',font=("times",12,"bold"))
-b1.place(x=120,y=440)
-b2 = Button(root, text='Cancel',command=root.destroy,width=15,bg='maroon',fg='white',font=("times",12,"bold"))
-b2.place(x=320,y=440)
+b1 = Button(root, text='Submit',command=saveinfo,width=15,bg='#93c47d',fg='white',font=("times",12,"bold"))
+b1.place(x=80,y=10)
+b2 = Button(root, text='Cancel',command=root.destroy,width=15,bg='#e06666',fg='white',font=("times",12,"bold"))
+b2.place(x=280,y=10)
 
 
 # Driver Code for XML
