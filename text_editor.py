@@ -11,7 +11,6 @@ window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
 window.geometry('%dx%d+%d+%d' % (w, h-95, 0, 0))
 window.configure(bg = "#f2f0f7")
-#window.attributes("-fullscreen", True)
 
 global copied_text
 copied_text = False
@@ -19,48 +18,32 @@ copied_text = False
 # Function to open a file
 def open_file():
     """Function that clears text box and displays contents of a newly chosen file. Default directory for files is set to Documents folder."""
-    text_box.delete(1.0, END)
-    
-    text_file = filedialog.askopenfilename(initialdir="Documents")
+    try:
+        text_box.delete(1.0, END)
         
-    name = os.path.basename(text_file)
-    window.title(name + " - Bookster")
-    
-    
-    text_file = open(text_file, 'r')
-    read_file = text_file.read()
-    
-    text_box.insert(END, read_file)
-    text_file.close
-
-# Display character information
-def display_char():
-    
-    read_box.delete(1.0, END)         
-    
-    read_file = open("char_"+clicked_char.get()+".txt", "r").read()
-    
-    read_box.insert(END, read_file)
-    
-    read_box.config(state=DISABLED)
-
-# Display location information
-def display_loc():
-    
-    read_box.delete(1.0, END)         
-    
-    read_file = open("loc_"+clicked_loc.get()+".txt", "r").read()
-    
-    read_box.insert(END, read_file)
-    
-    read_box.config(state=DISABLED)
+        text_file = filedialog.askopenfilename(initialdir="Documents")
+        
+        name = os.path.basename(text_file)
+        window.title(name + " - Bookster")
+        
+        
+        text_file = open(text_file, 'r')
+        read_file = text_file.read()
+        
+        text_box.insert(END, read_file)
+        text_file.close
+        
+    except:
+        pass
 
 # Function to create new file
 def create_file():
     """Function to create a new file. It clears existing text from the text box."""
-    text_box.delete(1.0, END)
-    window.title("New file - Bookster")
-
+    try:
+        text_box.delete(1.0, END)
+        window.title("New file - Bookster")
+    except:
+        pass
 # Copy function
 def copy_text(shortcut):
     """Function that allows copying selected text."""
@@ -159,11 +142,44 @@ def new_character():
 def new_location():
     """Function that calls Location_sheet script upon button press."""
     subprocess.call(["python", "Location_sheet.py"])
+    
+# Display character information
+def display_char(event):
+    
+    read_box.config(state=NORMAL) 
+    read_box.delete(1.0, END)         
+    
+    read_file = open("char_"+clicked_char.get()+".txt", "r").read()   
+    read_box.insert(END, read_file)
+    
+    read_box.config(state=DISABLED)
+
+# Display location information
+def display_loc(event):
+    
+    read_box.config(state=NORMAL)   
+    read_box.delete(1.0, END)         
+    
+    read_file = open("loc_"+clicked_loc.get()+".txt", "r").read() 
+    read_box.insert(END, read_file)
+    
+    read_box.config(state=DISABLED)    
 
 # Function to refresh list of existing files
 def refresh_frame():
-    pass
-    
+    character_dropbox = OptionMenu(widget_frame, clicked_char, *characters)    
+
+# WIP Function to count words in a  file
+def get_words(current_file):
+    try:
+        file = open(current_file, 'rt')
+        read_words = file.read()
+        per_word = read_words.split()   
+        total_words = len(per_word)
+        
+        return total_words
+    except:
+        pass
 
 # Toolbar
 tools_frame = Frame(window, bg = "#d9d2e9")
@@ -174,7 +190,7 @@ text_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#f2f
 text_frame.place(x = 30, y = 32)
 
 # Widget frame
-widget_frame = Frame(window, width = 3020, height = 1600, padx = 10, pady = 10)
+widget_frame = Frame(window, width = 3020, height = 1600, padx = 10, pady = 10, bg = "#f2f0f7")
 widget_frame.place(x = 861, y = 32)
 
 #Scrollbar for text
@@ -182,7 +198,7 @@ scroll_bar = Scrollbar(text_frame)
 scroll_bar.pack(side = RIGHT, fill = Y)
 
 # Frame for reading box
-read_frame = Frame(window, width = 2480, height = h - 400, pady = 10)
+read_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#f2f0f7")
 read_frame.place(x = 970, y = 32)
 
 # Text box
@@ -214,28 +230,22 @@ directory = os.getcwd()
 clicked_char = StringVar()
 clicked_loc = StringVar()
 
-try:
-    for file in os.listdir(directory):
-        if file.endswith(".txt") and file.startswith("char_"):
-            char_name = file.strip("char_").strip(".txt")
-            characters.append(char_name)
-            clicked_char.set(char_name)
-        character_dropbox = OptionMenu(widget_frame, clicked_char, *characters)
+for file in os.listdir(directory):
+    if file.endswith(".txt") and file.startswith("char_"):
+        char_name = file.strip("char_").strip(".txt")
+        characters.append(char_name)
+        clicked_char.set(char_name)
 
-    for file in os.listdir(directory):
-        if file.endswith(".txt") and file.startswith("loc_"):
-            loc_name = file.strip("loc_").strip(".txt")
-            locations.append(loc_name)
-            clicked_loc.set(loc_name)
-        loc_dropbox = OptionMenu(widget_frame, clicked_loc, *locations)
-except:
-    character_dropbox = OptionMenu(widget_frame, clicked_char, "No characters")
-    loc_dropbox = OptionMenu(widget_frame, clicked_loc, "No locations")
-    clicked_char.set("No characters")
-    clicked_loc.set("No locations")
+for file in os.listdir(directory):
+    if file.endswith(".txt") and file.startswith("loc_"):
+        loc_name = file.strip("loc_").strip(".txt")
+        locations.append(loc_name)
+        clicked_loc.set(loc_name)
 
-char_label = Label(text = "Character: ")
-loc_label = Label(text = "Location: ")
+char_label = Label(text = "Character: ", bg = "#f2f0f7")
+character_dropbox = OptionMenu(widget_frame, clicked_char, *characters, command = display_char)
+loc_label = Label(text = "Location: ", bg = "#f2f0f7")
+loc_dropbox = OptionMenu(widget_frame, clicked_loc, *locations, command = display_loc)
 
 character_dropbox.place(x = 100, y = 760)
 loc_dropbox.place(x = 100, y = 790)
@@ -243,23 +253,15 @@ loc_dropbox.place(x = 100, y = 790)
 char_label.place(x = 900, y = 810)
 loc_label.place(x = 900, y = 840)
 
-# Buttons for displaying info on the screen
-
-char_show = Button(widget_frame, text = "Show character", command = display_char)
-loc_show = Button(widget_frame, text = "Show location", command = display_loc)
-
-char_show.place(x = 250, y = 760)
-loc_show.place(x = 250, y = 790)
-
 # Widget side
-character_button = Button(widget_frame, text = "New character", command = new_character)
+character_button = Button(widget_frame, text = "New character", command = new_character, bg = "#d9d2e9")
 character_button.place(x = 0, y = 20)
 
-location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3)
+location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3, bg = "#d9d2e9")
 location_button.place(x = 0, y = 60)
 
-refresh_button = Button(widget_frame, text = "Refresh", command = refresh_frame())
-refresh_button.place(x = 360, y = 775)
+refresh_button = Button(widget_frame, text = "Refresh", command = refresh_frame, bg = "#d9d2e9")
+refresh_button.place(x = 30, y = 732)
 
 # Menu
 menu_tab = Menu(window)
@@ -285,8 +287,8 @@ edit_menu.add_command(label = "Undo   Ctrl+Z")
 edit_menu.add_command(label = "Redo   Ctrl+Y")
 
 # Status bar
-written = 10000 #placeholder value until functions are ready
-goal = 20000 #placeholder value until functions are ready
+written = 10000 # placeholder value until function is ready
+goal = 20000 # placeholder value until function is ready
 status_bar = Label(window, bg = "#d9d2e9", text = f"Writing goal {written}/{goal} {written/goal*100}%", anchor = S)
 status_bar.pack(fill = X, side = BOTTOM)
 
