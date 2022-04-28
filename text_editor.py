@@ -7,8 +7,10 @@ import os
 window = Tk()
 window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
-window.geometry("%dx%d" % (w, h))
-#window.geometry("1200x700+200+150")
+window.geometry('%dx%d+%d+%d' % (w-10, h-95, 0, 0))
+window.configure(bg = "#f2f0f7")
+#window.attributes("-fullscreen", True)
+
 
 global if_open_file
 if_open_file = False
@@ -164,11 +166,11 @@ def open_location():
 
 
 # Toolbar
-tools_frame = Frame(window, bg = "#FCF5E2")
-tools_frame.pack(fill = X)
+tools_frame = Frame(window, bg = "#d9d2e9")
+tools_frame.pack(fill = X, pady = 5)
 
 # Textbox frame
-text_frame = Frame(window, width = 2480, height = 3508)
+text_frame = Frame(window, width = 2480, height = 3508, pady = 10)
 text_frame.place(x = 30, y = 30)
 
 # Widget frame
