@@ -129,11 +129,11 @@ def underscore_text():
     else:
         text_box.tag_add("underline", "sel.first", "sel.last")
         
-# WIP
+# WIP Function that executes upon New Character button press
 def new_character():
     pass
 
-# Function that executes upond New Location button press
+# Function that executes upon New Location button press
 def new_location():
     """Function that calls Location_sheet script upon button press."""
     subprocess.call(["python", "Location_sheet.py"])
@@ -163,6 +163,21 @@ text_box = Text(text_frame, width = 90, height = 55, font = ("Helvetica", 12),
 text_box.pack(pady = 5)
 
 scroll_bar.config(command = text_box.yview)
+
+# Text box for reading files
+
+right_scrollbar = Scrollbar(text_frame)
+right_scrollbar.pack(side = RIGHT, fill = Y)
+
+read_box = Text(widget_frame, width = 90, height = 40, font = ("Helvetica", 12),
+                selectbackground = "#FCF5E2", selectforeground = "black",
+                undo = True, yscrollcommand = right_scrollbar.set)
+read_box.pack()
+
+read_box.config(state=DISABLED)
+
+right_scrollbar.config(command = read_box.yview)
+
 #scroll_widget.config(command = widget_frame.yview)
 
 # Widget side
