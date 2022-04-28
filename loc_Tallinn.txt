@@ -1,11 +1,11 @@
 Location name: Tallinn
-Type of climate: Cold
- Type of nature: Bautiful
-Land area size: 234523654367
-Brief history: History
-Proud milestones: 
-Historical trauma: 
- Population No.: 
-Ethnic groups: 
-Religions: 
-Languages: 
+Type of climate: 1
+Type of nature: 2
+Land area size: 3
+Brief history: 4
+Proud milestones: 5
+Historical trauma: 6
+Population No.: 7
+Ethnic groups: 8
+Religions: 9
+Languages: 0

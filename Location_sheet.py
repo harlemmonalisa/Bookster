@@ -15,7 +15,7 @@ def save():
     now = datetime.datetime.now()
     #save data in txt file
 
-    s="Location name: "+e1.get()+'\n'+"Type of climate: "+e2.get()+'\n '+"Type of nature: "+e3.get()+'\n'+"Land area size: " +e4.get()+'\n'+"Brief history: " +e5.get()+'\n' "Proud milestones: " +e6.get()+'\n'+"Historical trauma: " +e7.get()+'\n '+"Population No.: " +e8.get()+'\n'+"Ethnic groups: " +e9.get()+'\n'+"Religions: " +e10.get()+'\n'+ "Languages: " +e11.get()
+    s="Location name: "+e1.get()+'\n'+"Type of climate: "+e2.get()+'\n'+"Type of nature: "+e3.get()+'\n'+"Land area size: " +e4.get()+'\n'+"Brief history: " +e5.get()+'\n' "Proud milestones: " +e6.get()+'\n'+"Historical trauma: " +e7.get()+'\n'+"Population No.: " +e8.get()+'\n'+"Ethnic groups: " +e9.get()+'\n'+"Religions: " +e10.get()+'\n'+ "Languages: " +e11.get()
     f = open(("loc_"+e1.get()+".txt"), "w")
     f.write(s)
     f.close()

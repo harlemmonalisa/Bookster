@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import font
-from file_actions import *
 import os
 import subprocess
 
@@ -15,26 +14,33 @@ window.configure(bg = "#f2f0f7")
 global copied_text
 copied_text = False
 
+global if_open_file
+if_open_file = False
+
+global open_name
+open_name = False
+
 # Function to open a file
 def open_file():
-    """Function that clears text box and displays contents of a newly chosen file. Default directory for files is set to Documents folder."""
-    try:
-        text_box.delete(1.0, END)
+    """Function that clears text box and displays contents of a newly chosen file. Default directory for files is set to Documents folder."""  
+   
+    text_box.delete(1.0, END)
         
-        text_file = filedialog.askopenfilename(initialdir="Documents")
+    text_file = filedialog.askopenfilename(initialdir="Documents", title = "Open file")
+    
+    if text_file:
+        global open_name
+        open_name = text_file
+    
+    name = os.path.basename(text_file)
+    window.title(name + " - Bookster")
+       
+    text_file = open(text_file, 'r')
+    read_file = text_file.read()
         
-        name = os.path.basename(text_file)
-        window.title(name + " - Bookster")
-        
-        
-        text_file = open(text_file, 'r')
-        read_file = text_file.read()
-        
-        text_box.insert(END, read_file)
-        text_file.close
-        
-    except:
-        pass
+    text_box.insert(END, read_file)
+    text_file.close
+
 
 # Function to create new file
 def create_file():
@@ -44,6 +50,35 @@ def create_file():
         window.title("New file - Bookster")
     except:
         pass
+
+# Save file as - currently unfinished
+def save_file_as():
+    """Function for saving text from the text box to a new file of a chosen format."""
+    text_file = filedialog.asksaveasfilename(initialdir="Documents", defaultextension=".txt", title = "Save file")
+    
+    if text_file:
+        name = os.path.basename(text_file)
+        window.title(name + " File saved - Bookster")
+        
+        text_file = open(text_file, 'w')
+        text_file.write(text_box.get(1.0, END))
+        
+        text_file.close
+        
+# Save file
+def save_file():
+    """Function for saving text from the text box to a new file. If file is already open - changes are being saved. If nno file open - file is saved as new."""
+    global open_name
+    
+    if  open_name:
+        text_file = open(open_name, 'w')
+        text_file.write(text_box.get(1.0, END))
+        
+        text_file.close
+    else:
+        save_file_as()
+    
+    
 # Copy function
 def copy_text(shortcut):
     """Function that allows copying selected text."""
@@ -86,6 +121,7 @@ def cut_text(shortcut):
             
 # Function for printing a text file on a printer - WIP            
 def print_file():
+    """Function to print text file on a printer"""
     pass
 
 # Make text bold
@@ -145,6 +181,7 @@ def new_location():
     
 # Display character information
 def display_char(event):
+    """Function displays contents of chosen character file on a screen"""
     
     read_box.config(state=NORMAL) 
     read_box.delete(1.0, END)         
@@ -156,6 +193,7 @@ def display_char(event):
 
 # Display location information
 def display_loc(event):
+    """Function displays contents of chosen location file on a screen"""
     
     read_box.config(state=NORMAL)   
     read_box.delete(1.0, END)         
@@ -165,19 +203,22 @@ def display_loc(event):
     
     read_box.config(state=DISABLED)    
 
-# Function to refresh list of existing files
+# WIP Function to refresh list of existing files
 def refresh_frame():
-    character_dropbox = OptionMenu(widget_frame, clicked_char, *characters)    
+    """Function to refresh list of existing files to dynamically access newly created ones"""
+    pass    
 
 # WIP Function to count words in a  file
+    """Function to calculate total amount of typed words in the text file"""
 def get_words(current_file):
     try:
-        file = open(current_file, 'rt')
+        file = open(current_file, "r")
         read_words = file.read()
         per_word = read_words.split()   
         total_words = len(per_word)
         
         return total_words
+    
     except:
         pass
 
@@ -221,7 +262,7 @@ read_box.pack()
 
 right_scrollbar.config(command = read_box.yview)
 
-# Dropbox for character selection
+# Dropboxes for character and location selection
 
 characters = []
 locations = []
@@ -230,6 +271,7 @@ directory = os.getcwd()
 clicked_char = StringVar()
 clicked_loc = StringVar()
 
+'''Potentially need to separate following into a function. Gets list of character and location files and adds them to the dropdown menu'''
 for file in os.listdir(directory):
     if file.endswith(".txt") and file.startswith("char_"):
         char_name = file.strip("char_").strip(".txt")
@@ -242,6 +284,7 @@ for file in os.listdir(directory):
         locations.append(loc_name)
         clicked_loc.set(loc_name)
 
+# Placing elements at the bottom of the read box
 char_label = Label(text = "Character: ", bg = "#f2f0f7")
 character_dropbox = OptionMenu(widget_frame, clicked_char, *characters, command = display_char)
 loc_label = Label(text = "Location: ", bg = "#f2f0f7")
@@ -272,7 +315,7 @@ file_menu = Menu(menu_tab, tearoff = False)
 menu_tab.add_cascade(label = "File", menu = file_menu)
 file_menu.add_command(label = "New", command = create_file)
 file_menu.add_command(label = "Open", command = open_file)
-file_menu.add_command(label = "Save text file", command = save_file)
+file_menu.add_command(label = "Save", command = save_file)
 file_menu.add_command(label = "Save as", command = save_file_as)
 file_menu.add_command(label = "Print", command = print_file)
 file_menu.add_command(label = "Exit", command = window.destroy)
