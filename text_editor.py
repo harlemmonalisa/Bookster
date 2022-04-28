@@ -33,6 +33,27 @@ def open_file():
     text_box.insert(END, read_file)
     text_file.close
 
+# Display character information
+def display_char():
+    
+    read_box.delete(1.0, END)         
+    
+    read_file = open("char_"+clicked_char.get()+".txt", "r").read()
+    
+    read_box.insert(END, read_file)
+    
+    read_box.config(state=DISABLED)
+
+# Display location information
+def display_loc():
+    
+    read_box.delete(1.0, END)         
+    
+    read_file = open("loc_"+clicked_loc.get()+".txt", "r").read()
+    
+    read_box.insert(END, read_file)
+    
+    read_box.config(state=DISABLED)
 
 # Function to create new file
 def create_file():
@@ -131,30 +152,38 @@ def underscore_text():
         
 # WIP Function that executes upon New Character button press
 def new_character():
-    pass
+    """Function that calls Character_sheet script upon button press."""
+    subprocess.call(["python", "Character Sheet.py"])
 
 # Function that executes upon New Location button press
 def new_location():
     """Function that calls Location_sheet script upon button press."""
     subprocess.call(["python", "Location_sheet.py"])
-    
 
+# Function to refresh list of existing files
+def refresh_frame():
+    pass
+    
 
 # Toolbar
 tools_frame = Frame(window, bg = "#d9d2e9")
 tools_frame.pack(fill = X, pady = 5)
 
 # Textbox frame
-text_frame = Frame(window, width = 2480, height = h - 400, pady = 10)
-text_frame.place(x = 30, y = 30)
+text_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#f2f0f7")
+text_frame.place(x = 30, y = 32)
 
 # Widget frame
-widget_frame = Frame(window, width = 2480, padx = 50, pady = 50)
-widget_frame.place(x = 870, y = 30)
+widget_frame = Frame(window, width = 3020, height = 1600, padx = 10, pady = 10)
+widget_frame.place(x = 861, y = 32)
 
 #Scrollbar for text
 scroll_bar = Scrollbar(text_frame)
 scroll_bar.pack(side = RIGHT, fill = Y)
+
+# Frame for reading box
+read_frame = Frame(window, width = 2480, height = h - 400, pady = 10)
+read_frame.place(x = 970, y = 32)
 
 # Text box
 text_box = Text(text_frame, width = 90, height = 55, font = ("Helvetica", 12),
@@ -169,23 +198,63 @@ scroll_bar.config(command = text_box.yview)
 right_scrollbar = Scrollbar(text_frame)
 right_scrollbar.pack(side = RIGHT, fill = Y)
 
-read_box = Text(widget_frame, width = 90, height = 40, font = ("Helvetica", 12),
+read_box = Text(read_frame, width = 90, height = 40, font = ("Helvetica", 12),
                 selectbackground = "#FCF5E2", selectforeground = "black",
                 undo = True, yscrollcommand = right_scrollbar.set)
 read_box.pack()
 
-read_box.config(state=DISABLED)
-
 right_scrollbar.config(command = read_box.yview)
 
-#scroll_widget.config(command = widget_frame.yview)
+# Dropbox for character selection
+
+characters = []
+locations = []
+directory = os.getcwd()
+
+clicked_char = StringVar()
+clicked_loc = StringVar()
+
+for file in os.listdir(directory):
+    if file.endswith(".txt") and file.startswith("char_"):
+        char_name = file.strip("char_").strip(".txt")
+        characters.append(char_name)
+        clicked_char.set(char_name)
+
+for file in os.listdir(directory):
+    if file.endswith(".txt") and file.startswith("loc_"):
+        loc_name = file.strip("loc_").strip(".txt")
+        locations.append(loc_name)
+        clicked_loc.set(loc_name)
+
+char_label = Label(text = "Character: ")
+character_dropbox = OptionMenu(widget_frame, clicked_char, *characters)
+
+loc_label = Label(text = "Location: ")
+loc_dropbox = OptionMenu(widget_frame, clicked_loc, *locations)
+
+character_dropbox.place(x = 100, y = 760)
+loc_dropbox.place(x = 100, y = 790)
+
+char_label.place(x = 900, y = 810)
+loc_label.place(x = 900, y = 840)
+
+# Buttons for displaying info on the screen
+
+char_show = Button(widget_frame, text = "Show character", command = display_char)
+loc_show = Button(widget_frame, text = "Show location", command = display_loc)
+
+char_show.place(x = 250, y = 760)
+loc_show.place(x = 250, y = 790)
 
 # Widget side
 character_button = Button(widget_frame, text = "New character", command = new_character)
-character_button.pack(padx = 5, pady = 5)
+character_button.place(x = 0, y = 20)
 
 location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3)
-location_button.pack(padx = 5, pady = 5)
+location_button.place(x = 0, y = 60)
+
+refresh_button = Button(widget_frame, text = "Refresh", command = refresh_frame())
+refresh_button.place(x = 360, y = 775)
 
 # Menu
 menu_tab = Menu(window)
@@ -225,7 +294,6 @@ italic.grid(row = 0, column = 2, padx = 5)
 
 underscore = Button(tools_frame, text = "  U  ", command = underscore_text)
 underscore.grid(row = 0, column = 4, padx = 5)
-
 
 # Key bindings for Copy-Paste-Cut-Print-Exit
 window.bind("<Control-x>", cut_text)

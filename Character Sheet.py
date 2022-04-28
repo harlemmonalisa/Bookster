@@ -7,7 +7,7 @@ import csv
 import xml.etree.ElementTree as gfg
 
 root = Tk()
-root.geometry('520x960')
+root.geometry('520x900+900+85')
 root.title("Character Sheet")
 
 #exporting entered data
@@ -16,10 +16,11 @@ def save():
     now = datetime.datetime.now()
     #save data in txt file
 
-    s='\n'+now.strftime("%d-%m-%Y %H:%M")+'\t'+"Full name: "+e1.get()+'\t'+"Nickname: "+e2.get()+'\t '+"Birthdate: " +e3.get()+'\t'+"Age: " + e4.get()+'\t'+"Weight: " +e5.get()+'\t '+"Height: " +e6.get()+'\t'+"Good personality traits: " +e7.get()+'\t '+"Bad personality traits: "+e8.get()
-    f = open(('characterdetails.txt'), 'a')
+    s="Full name: "+e1.get()+'\n'+"Nickname: "+e2.get()+'\n'+"Birthdate: " +e3.get()+'\n'+"Age: " + e4.get()+'\n'+"Weight: " +e5.get()+'\n'+"Height: " +e6.get()+'\n'+"Good personality traits: " +e7.get()+'\n'+"Bad personality traits: "+e8.get()
+    f = open(("char_"+e1.get()+".txt"), "w")
     f.write(s)
     f.close()
+    root.destroy()
     
     #save data in csv file
     #with open('LocationFile.csv', 'a') as fs:
@@ -29,6 +30,7 @@ def save():
         
 def saveinfo():
     save()
+    root.destroy
     
     
 # Widget frame for scrollbar
@@ -103,9 +105,9 @@ e8.place(x=240,y=580)
 
 
 # submit and cancel buttons
-b1 = Button(root, text='Submit',command=saveinfo,width=15,bg='green',fg='white',font=("times",12,"bold"))
-b1.place(x=120,y=630)
-b2 = Button(root, text='Cancel',command=root.destroy,width=15,bg='maroon',fg='white',font=("times",12,"bold"))
-b2.place(x=320,y=630)
+b1 = Button(root, text='Submit',command=saveinfo,width=15,bg='#93c47d',fg='white',font=("times",12,"bold"))
+b1.place(x=80,y=10)
+b2 = Button(root, text='Cancel',command=root.destroy,width=15,bg='#e06666',fg='white',font=("times",12,"bold"))
+b2.place(x=280,y=10)
 
 root.mainloop()

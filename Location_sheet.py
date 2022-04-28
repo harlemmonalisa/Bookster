@@ -15,15 +15,15 @@ def save():
     now = datetime.datetime.now()
     #save data in txt file
 
-    s='\n'+now.strftime("%d-%m-%Y %H:%M")+'\t'+"Location name: "+e1.get()+'\t'+"Type of climate: "+e2.get()+'\t '+"Type of nature: "+e3.get()+'\t'+"Land area size: " +e4.get()+'\t'+"Brief history: " +e5.get()+'\t' "Proud milestones: " +e6.get()+'\t'+"Historical trauma: " +e7.get()+'\t '+"Population No.: " +e8.get()+'\t'+"Ethnic groups: " +e9.get()+'\t'+"Religions: " +e10.get()+'\t'+ "Languages: " +e11.get()
-    f = open(('locationdetails.txt'), 'a')
+    s="Location name: "+e1.get()+'\n'+"Type of climate: "+e2.get()+'\n '+"Type of nature: "+e3.get()+'\n'+"Land area size: " +e4.get()+'\n'+"Brief history: " +e5.get()+'\n' "Proud milestones: " +e6.get()+'\n'+"Historical trauma: " +e7.get()+'\n '+"Population No.: " +e8.get()+'\n'+"Ethnic groups: " +e9.get()+'\n'+"Religions: " +e10.get()+'\n'+ "Languages: " +e11.get()
+    f = open(("loc_"+e1.get()+".txt"), "w")
     f.write(s)
     f.close()
+    root.destroy()
     
         
 def saveinfo():
     save()        
-
 
 
 # Widget frame for scrollbar
