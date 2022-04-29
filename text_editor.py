@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import font
@@ -19,6 +20,15 @@ if_open_file = False
 
 global open_name
 open_name = False
+
+global characters
+global locations
+
+characters = []
+locations = []
+directory = os.getcwd()
+clicked_char = StringVar()
+clicked_loc = StringVar()
 
 # Function to open a file
 def open_file():
@@ -82,7 +92,7 @@ def save_file():
 # Copy function
 def copy_text(shortcut):
     """Function that allows copying selected text."""
-    
+    global copied_text
     # If user uses windows shortcuts - get copied text from the clipboard
     if shortcut:
         copied_text = window.clipboard_get()
@@ -95,29 +105,35 @@ def copy_text(shortcut):
 # Paste function
 def paste_text(shortcut):
     """Function that allows pasting selected text."""
-    
+    global copied_text
+    try:
     # If user uses windows shortcuts - get copied text from the clipboard
-    if shortcut:
-        copied_text = window.clipboard_get()
-    else:
-        if copied_text:
-            cursor = text_box.index(INSERT)
-            text_box.insert(cursor, copied_text)
+        if shortcut:
+            copied_text = window.clipboard_get()
+        else:
+            if copied_text:
+                cursor = text_box.index(INSERT)
+                text_box.insert(cursor, copied_text)
+    except:
+        pass
 
 # Cut function
 def cut_text(shortcut):
     """Function that allows cutting selected text."""
-    
+    global copied_text
     # If user uses windows shortcuts - get copied text from the clipboard
-    if shortcut:
-        copied_text = window.clipboard_get()
-    else:
-            
-        if text_box.selection_get():
-            copied_text = text_box.selection_get()
-            text_box.delete("sel.first", "sel.last")
-            window.clipboard_clear()
-            window.clipboard_append(copied_text)
+    try:
+        if shortcut:
+            copied_text = window.clipboard_get()
+        else:
+                
+            if text_box.selection_get():
+                copied_text = text_box.selection_get()
+                text_box.delete("sel.first", "sel.last")
+                window.clipboard_clear()
+                window.clipboard_append(copied_text)
+    except:
+        pass
             
 # Function for printing a text file on a printer - WIP            
 def print_file():
@@ -205,13 +221,40 @@ def display_loc(event):
     read_box.config(state=DISABLED)    
 
 # WIP Function to refresh list of existing files
-def refresh_frame():
+def get_sheets():
     """Function to refresh list of existing files to dynamically access newly created ones"""
-    pass    
+    pass
+''' Need to figure it out further
+    #character_dropbox['menu'].delete(0, END)
+    #loc_dropbox['menu'].delete(0, END)
+    
+    directory = os.getcwd()
+    
+    new_char_list = []
+    
+    for file in os.listdir(directory):
+        if file.endswith(".txt") and file.startswith("char_"):
+            char_name = file.strip("char_").strip(".txt")
+            new_char_list.append(char_name)
+    clicked_char.set(char_name)        
+    for char in new_char_list:
+        character_dropbox['menu'].add_command(label = char, command = tk._setit(clicked_char, char))
+    
+    new_loc_list = []
+    
+    for file in os.listdir(directory):
+        if file.endswith(".txt") and file.startswith("loc_"):
+            loc_name = file.strip("loc_").strip(".txt")
+            new_loc_list.append(loc_name)
+            clicked_loc.set(loc_name)
+    for loc in new_loc_list:
+        loc_dropbox['menu'].add_command(label = loc, command = tk._setit(clicked_loc, loc))
+'''    
 
 # WIP Function to count words in a  file
-    """Function to calculate total amount of typed words in the text file"""
+
 def get_words(current_file):
+    """Function to calculate total amount of typed words in the text file"""
     try:
         file = open(current_file, "r")
         read_words = file.read()
@@ -265,13 +308,6 @@ right_scrollbar.config(command = read_box.yview)
 
 # Dropboxes for character and location selection
 
-characters = []
-locations = []
-directory = os.getcwd()
-
-clicked_char = StringVar()
-clicked_loc = StringVar()
-
 '''Potentially need to separate following into a function. Gets list of character and location files and adds them to the dropdown menu'''
 for file in os.listdir(directory):
     if file.endswith(".txt") and file.startswith("char_"):
@@ -304,7 +340,7 @@ character_button.place(x = 0, y = 20)
 location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3, bg = "#d9d2e9")
 location_button.place(x = 0, y = 60)
 
-refresh_button = Button(widget_frame, text = "Refresh", command = refresh_frame, bg = "#d9d2e9")
+refresh_button = Button(widget_frame, text = "Refresh", command = get_sheets, bg = "#d9d2e9")
 refresh_button.place(x = 30, y = 732)
 
 # Menu
