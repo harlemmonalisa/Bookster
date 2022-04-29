@@ -124,6 +124,7 @@ def print_file():
     """Function to print text file on a printer"""
     pass
 
+'''Need to save files in a different format that txt to get styling'''
 # Make text bold
 def bold_text():
     """Function that makes selected text bold or removes bold weight if the text was already bold."""
