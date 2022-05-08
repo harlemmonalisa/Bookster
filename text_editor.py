@@ -1,5 +1,4 @@
 from tkinter import *
-import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import font
@@ -222,37 +221,23 @@ def display_loc(event):
 
 # WIP Function to refresh list of existing files
 def get_sheets():
-    """Function to refresh list of existing files to dynamically access newly created ones"""
-    pass
-''' Need to figure it out further
-    #character_dropbox['menu'].delete(0, END)
-    #loc_dropbox['menu'].delete(0, END)
-    
-    directory = os.getcwd()
-    
-    new_char_list = []
-    
+    characters = []
+    locations = []
     for file in os.listdir(directory):
         if file.endswith(".txt") and file.startswith("char_"):
             char_name = file.strip("char_").strip(".txt")
-            new_char_list.append(char_name)
-    clicked_char.set(char_name)        
-    for char in new_char_list:
-        character_dropbox['menu'].add_command(label = char, command = tk._setit(clicked_char, char))
-    
-    new_loc_list = []
-    
+            characters.append(char_name)
+            clicked_char.set(char_name)
+    character_dropbox["values"] = characters
+
     for file in os.listdir(directory):
         if file.endswith(".txt") and file.startswith("loc_"):
             loc_name = file.strip("loc_").strip(".txt")
-            new_loc_list.append(loc_name)
+            locations.append(loc_name)
             clicked_loc.set(loc_name)
-    for loc in new_loc_list:
-        loc_dropbox['menu'].add_command(label = loc, command = tk._setit(clicked_loc, loc))
-'''    
-
+    loc_dropbox["values"] = locations
+    
 # WIP Function to count words in a  file
-
 def get_words(current_file):
     """Function to calculate total amount of typed words in the text file"""
     try:
@@ -307,26 +292,17 @@ read_box.pack()
 right_scrollbar.config(command = read_box.yview)
 
 # Dropboxes for character and location selection
+char_label = Label(text = "Character: ", bg = "#f2f0f7")
+character_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_char, values = characters, postcommand = get_sheets)
+character_dropbox["state"] = "readonly"
+character_dropbox.bind("<<ComboboxSelected>>", display_char)
 
-'''Potentially need to separate following into a function. Gets list of character and location files and adds them to the dropdown menu'''
-for file in os.listdir(directory):
-    if file.endswith(".txt") and file.startswith("char_"):
-        char_name = file.strip("char_").strip(".txt")
-        characters.append(char_name)
-        clicked_char.set(char_name)
-
-for file in os.listdir(directory):
-    if file.endswith(".txt") and file.startswith("loc_"):
-        loc_name = file.strip("loc_").strip(".txt")
-        locations.append(loc_name)
-        clicked_loc.set(loc_name)
+loc_label = Label(text = "Location: ", bg = "#f2f0f7")
+loc_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_loc, values = locations, postcommand = get_sheets)
+loc_dropbox["state"] = "readonly"
+loc_dropbox.bind("<<ComboboxSelected>>", display_loc)
 
 # Placing elements at the bottom of the read box
-char_label = Label(text = "Character: ", bg = "#f2f0f7")
-character_dropbox = OptionMenu(widget_frame, clicked_char, *characters, command = display_char)
-loc_label = Label(text = "Location: ", bg = "#f2f0f7")
-loc_dropbox = OptionMenu(widget_frame, clicked_loc, *locations, command = display_loc)
-
 character_dropbox.place(x = 100, y = 760)
 loc_dropbox.place(x = 100, y = 790)
 
@@ -339,9 +315,6 @@ character_button.place(x = 0, y = 20)
 
 location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3, bg = "#d9d2e9")
 location_button.place(x = 0, y = 60)
-
-refresh_button = Button(widget_frame, text = "Refresh", command = get_sheets, bg = "#d9d2e9")
-refresh_button.place(x = 30, y = 732)
 
 # Menu
 menu_tab = Menu(window)

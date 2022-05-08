@@ -1,11 +1,11 @@
 Location name: Tallinn
-Type of climate: 1
-Type of nature: 2
-Land area size: 3
-Brief history: 4
-Proud milestones: 5
-Historical trauma: 6
-Population No.: 7
-Ethnic groups: 8
-Religions: 9
-Languages: 0
+Type of climate: Humid continental climate
+Type of nature: Cool
+Land area size: 159.2 km2
+Brief history: Things
+Proud milestones: Things
+Historical trauma: Things
+Population No.: 438,341
+Ethnic groups: Estonians, Russians, Other
+Religions: NA
+Languages: Estonian, Russian
