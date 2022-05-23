@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import font
+import requests
+import random
 import os
 import subprocess
 
@@ -9,7 +11,7 @@ window = Tk()
 window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
 window.geometry('%dx%d+%d+%d' % (w, h-95, 0, 0))
-window.configure(bg = "#f2f0f7")
+window.configure(bg = "#FAFDFD")
 
 global copied_text
 copied_text = False
@@ -46,10 +48,19 @@ def open_file():
        
     text_file = open(text_file, 'r')
     read_file = text_file.read()
+    
+    written = len(read_file.split())
+    try:
+        goal_file = open("target.txt", 'r')
+        goal = int(goal_file.read())
+    
+    except:
+        goal = 50000
         
+    status_bar.config(text = f"Writing goal {written}/{goal} {round(written/goal*100)}%")
+         
     text_box.insert(END, read_file)
     text_file.close
-
 
 # Function to create new file
 def create_file():
@@ -194,7 +205,7 @@ def new_character():
 def new_location():
     """Function that calls Location_sheet script upon button press."""
     subprocess.call(["python", "Location_sheet.py"])
-    
+
 # Display character information
 def display_char(event):
     """Function displays contents of chosen character file on a screen"""
@@ -250,17 +261,40 @@ def get_words(current_file):
     
     except:
         pass
+    
+def generate_word():
+    #source where random words will be pulled from
+    word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
+
+    #pulling random words
+    response = requests.get(word_site)
+    WORDS = response.content.splitlines()
+
+    #execute random word
+    random_word = random.choice(WORDS)
+    #convert to string type
+    string_word = str(random_word)
+    #to omit the extra b letter at the front
+    final_random_word = string_word[1:]
+    
+    word_box.config(state=NORMAL)   
+    word_box.delete(1.0, END)         
+    word_box.insert(END, final_random_word.strip("'"))   
+    word_box.config(state=DISABLED)
+    
+def set_target():
+    subprocess.call(["python", "set_writing_goal.py"])
 
 # Toolbar
-tools_frame = Frame(window, bg = "#d9d2e9")
+tools_frame = Frame(window, bg = "#E4EAEA")
 tools_frame.pack(fill = X, pady = 5)
 
 # Textbox frame
-text_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#f2f0f7")
+text_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#FAFDFD")
 text_frame.place(x = 30, y = 32)
 
 # Widget frame
-widget_frame = Frame(window, width = 3020, height = 1600, padx = 10, pady = 10, bg = "#f2f0f7")
+widget_frame = Frame(window, width = 3020, height = 1600, padx = 10, pady = 10, bg = "#FAFDFD")
 widget_frame.place(x = 861, y = 32)
 
 #Scrollbar for text
@@ -268,7 +302,7 @@ scroll_bar = Scrollbar(text_frame)
 scroll_bar.pack(side = RIGHT, fill = Y)
 
 # Frame for reading box
-read_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#f2f0f7")
+read_frame = Frame(window, width = 2480, height = h - 400, pady = 10, bg = "#FAFDFD")
 read_frame.place(x = 970, y = 32)
 
 # Text box
@@ -292,15 +326,25 @@ read_box.pack()
 right_scrollbar.config(command = read_box.yview)
 
 # Dropboxes for character and location selection
-char_label = Label(text = "Character: ", bg = "#f2f0f7")
+char_label = Label(text = "Character: ", bg = "#FAFDFD")
 character_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_char, values = characters, postcommand = get_sheets)
 character_dropbox["state"] = "readonly"
 character_dropbox.bind("<<ComboboxSelected>>", display_char)
 
-loc_label = Label(text = "Location: ", bg = "#f2f0f7")
+loc_label = Label(text = "Location: ", bg = "#FAFDFD")
 loc_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_loc, values = locations, postcommand = get_sheets)
 loc_dropbox["state"] = "readonly"
 loc_dropbox.bind("<<ComboboxSelected>>", display_loc)
+
+#Random word field
+word_button = Button(widget_frame, text = "Generate random word", command = generate_word, bg = "#E4EAEA")
+
+word_box = Text(widget_frame, width = 20, height = 1, font = ("Helvetica", 12),
+                selectbackground = "#FCF5E2", selectforeground = "black",
+                undo = True, yscrollcommand = right_scrollbar.set)
+
+# Set writing goal
+goal_button = Button(widget_frame, text = "Set writing goal", command = set_target, bg = "#E4EAEA")
 
 # Placing elements at the bottom of the read box
 character_dropbox.place(x = 100, y = 760)
@@ -309,11 +353,16 @@ loc_dropbox.place(x = 100, y = 790)
 char_label.place(x = 900, y = 810)
 loc_label.place(x = 900, y = 840)
 
+word_button.place(x = 350, y = 760)
+word_box.place(x = 350, y = 790)
+
+goal_button.place(x = 0, y = 160)
+
 # Widget side
-character_button = Button(widget_frame, text = "New character", command = new_character, bg = "#d9d2e9")
+character_button = Button(widget_frame, text = "New character", command = new_character, bg = "#E4EAEA")
 character_button.place(x = 0, y = 20)
 
-location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3, bg = "#d9d2e9")
+location_button = Button(widget_frame, text = "New Location", command = new_location, padx = 3, bg = "#E4EAEA")
 location_button.place(x = 0, y = 60)
 
 # Menu
@@ -339,10 +388,9 @@ edit_menu.add_command(label = "Cut    Ctrl+X", command = lambda: cut_text(False)
 edit_menu.add_command(label = "Undo   Ctrl+Z")
 edit_menu.add_command(label = "Redo   Ctrl+Y")
 
+
 # Status bar
-written = 10000 # placeholder value until function is ready
-goal = 20000 # placeholder value until function is ready
-status_bar = Label(window, bg = "#d9d2e9", text = f"Writing goal {written}/{goal} {written/goal*100}%", anchor = S)
+status_bar = Label(window, bg = "#E4EAEA", text = f"Open file to see your writing progress", anchor = S)
 status_bar.pack(fill = X, side = BOTTOM)
 
 # Toolbar buttons and widgets
@@ -361,5 +409,3 @@ window.bind("<Control-c>", copy_text)
 window.bind("<Control-v>", paste_text)
 
 window.mainloop()
-
-

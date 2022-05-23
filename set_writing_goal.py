@@ -4,7 +4,7 @@ import datetime
 
 window = tk.Tk()
 window.geometry('320x150+500+85')
-window.title("Character text target")
+window.title("Set writing goal")
 
 #exporting entered data
 def save():
@@ -12,7 +12,7 @@ def save():
     #save data in txt file
 
     s= entry.get()
-    f = open(("texttarget"+entry.get()+".txt"), "w")
+    f = open(("target.txt"), "w")
     f.write(s)
     f.close()
     window.destroy()
@@ -21,7 +21,7 @@ def saveinfo():
     save()
 
 #label and entry box
-label = tk.Label(text="Insert no. of text target")
+label = tk.Label(text="Insert your target word count")
 entry = tk.Entry()
 
 label.pack()

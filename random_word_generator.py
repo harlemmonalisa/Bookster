@@ -15,5 +15,4 @@ string_word = str(random_word)
 #to omit the extra b letter at the front
 final_random_word = string_word[1:]
 
-
-print(final_random_word)
+return final_random_word
