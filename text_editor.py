@@ -10,7 +10,7 @@ import subprocess
 window = Tk()
 window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
-window.geometry('%dx%d+%d+%d' % (w, h-95, 0, 0))
+window.geometry('%dx%d+%d+%d' % (w, h-95, -7, 0))
 window.configure(bg = "#FAFDFD")
 
 global copied_text
