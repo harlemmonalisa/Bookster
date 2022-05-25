@@ -2,11 +2,13 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import font
+from subprocess import Popen
 import requests
 import random
 import os
 import subprocess
 import datetime
+import win32api
 
 window = Tk()
 window.title("Bookster")
@@ -32,6 +34,7 @@ global path
 global init_path
 global projects_dropbox
 global open_project
+global file_name
 
 characters = []
 locations = []
@@ -81,6 +84,7 @@ def get_projects():
   
 def display_project():
     
+    global file_name
     user = os.getlogin()
     
     open_dir = "C:/Users/" + user + "/Documents/Bookster/" + projects_dropbox.get()
@@ -139,6 +143,7 @@ def create_project():
 def create_dirs():
     
     global path
+    global project_name
     
     project_name = name_entry.get()
     
@@ -169,25 +174,12 @@ def create_dirs():
         
 # Save file
 def save_project():
-    """Function for saving text from the text box to a new file. If file is already open - changes are being saved. If no file open - file is saved as new."""
-    global open_name
+    """Function for saving changes to the project"""
+    global file_name
     
-    if  open_name:
-        text_file = open(open_name, 'w')
-        text_file.write(text_box.get(1.0, END))
-        
-        text_file.close
-    else:
-        text_file = filedialog.asksaveasfilename(initialdir="Documents", defaultextension=".txt", title = "Save file")
-    
-        if text_file:
-            name = os.path.basename(text_file)
-            window.title(name + " File saved - Bookster")
-            
-            text_file = open(text_file, 'w')
-            text_file.write(text_box.get(1.0, END))
-            
-            text_file.close
+    text_file = open((file_name), "w")
+    text_file.write(text_box.get(1.0, END))
+    text_file.close
        
 # Copy function
 def copy_text(shortcut):
@@ -235,10 +227,12 @@ def cut_text(shortcut):
     except:
         pass
             
-# Function for printing a text file on a printer - WIP            
+# Function for printing a text file on a printer            
 def print_file():
-    """Function to print text file on a printer"""
-    pass
+    """Function to print text file on a default printer"""
+    
+    global file_name
+    win32api.ShellExecute(0, "print", file_name, None, ".", 0)
 
 '''Need to save files in a different format that txt to get styling'''
 # Make text bold
