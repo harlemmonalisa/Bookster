@@ -6,11 +6,12 @@ import requests
 import random
 import os
 import subprocess
+import datetime
 
 window = Tk()
 window.title("Bookster")
 w, h = window.winfo_screenwidth(), window.winfo_screenheight()
-window.geometry('%dx%d+%d+%d' % (w, h-95, -7, 0))
+window.geometry('%dx%d+%d+%d' % (w, h-91, -7, 0))
 window.configure(bg = "#FAFDFD")
 
 global copied_text
@@ -24,29 +25,72 @@ open_name = False
 
 global characters
 global locations
+global projects
+global name_entry
+global name_window
+global path
+global init_path
+global projects_dropbox
+global open_project
 
 characters = []
 locations = []
-directory = os.getcwd()
+projects = []
+
 clicked_char = StringVar()
 clicked_loc = StringVar()
 
+init_path = os.path.dirname(os.path.realpath(__file__))
+
+
 # Function to open a file
-def open_file():
-    """Function that clears text box and displays contents of a newly chosen file. Default directory for files is set to Documents folder."""  
-   
+def open_projects():
+    """Function that clears text box and displays contents of a newly chosen project. Default directory for files is set to Documents/Bookster/*Project* folder."""  
+    global projects
+    global projects_dropbox
+    global open_project
+    
+    open_project = Tk()
+    open_project.geometry('320x130+90+95')
+    open_project.title("Select project")
+    
+    projects_label = Label(open_project, text="Select a project to load")
+    projects_dropbox = ttk.Combobox(open_project, values = projects, postcommand = get_projects)
+    projects_dropbox["state"] = "readonly"
+    
+    projects_button = Button(open_project, text='Submit', command = display_project, width=15, bg='#93c47d', fg='white', font=("times",12,"bold"))
+    
+    projects_label.place(x = 10, y = 10)
+    projects_dropbox.place(x = 10, y = 30)
+    projects_button.place(x = 10, y = 60)
+    
+def get_projects():
+    
+    global projects
+    global projects_dropbox
+    
+    user = os.getlogin()
+    directory = "C:/Users/" + user + "/Documents/Bookster"
+    
+    projects = []
+    
+    for project in os.listdir(directory):
+        project_name = project
+        projects.append(project_name)
+    projects_dropbox["values"] = projects
+  
+def display_project():
+    
+    user = os.getlogin()
+    
+    open_dir = "C:/Users/" + user + "/Documents/Bookster/" + projects_dropbox.get()
+    os.chdir(open_dir)
+    
+    file_name = projects_dropbox.get() + ".txt"
+    
     text_box.delete(1.0, END)
-        
-    text_file = filedialog.askopenfilename(initialdir="Documents", title = "Open file")
-    
-    if text_file:
-        global open_name
-        open_name = text_file
-    
-    name = os.path.basename(text_file)
-    window.title(name + " - Bookster")
        
-    text_file = open(text_file, 'r')
+    text_file = open(file_name, 'r')
     read_file = text_file.read()
     
     written = len(read_file.split())
@@ -61,33 +105,71 @@ def open_file():
          
     text_box.insert(END, read_file)
     text_file.close
+    open_project.destroy()
 
 # Function to create new file
-def create_file():
-    """Function to create a new file. It clears existing text from the text box."""
+def create_project():
+    """Function to create a new project. It clears existing text from the text box."""
+    global name_window
+    
+    name_window = Tk()
+    name_window.geometry('320x130+90+95')
+    name_window.title("Create new project")
+    
+    global name_entry
+    
+    name_label = Label(name_window, text="What is the name of your project?")
+    name_entry = Entry(name_window, width = 47)
+
+    name_label.place(x = 85, y = 10)
+    name_entry.place(x = 15, y = 30)
+ 
+    submit_button = Button(name_window, text='Create project', command = create_dirs, width = 15, bg = '#93c47d', fg = 'white', font = ("times", 12, "bold"))
+    submit_button.place(x = 85, y = 65)
+
+    name_window.mainloop()
+    
     try:
         text_box.delete(1.0, END)
-        window.title("New file - Bookster")
+        name_window.title("New project - Bookster")
+           
     except:
         pass
-
-# Save file as - currently unfinished
-def save_file_as():
-    """Function for saving text from the text box to a new file of a chosen format."""
-    text_file = filedialog.asksaveasfilename(initialdir="Documents", defaultextension=".txt", title = "Save file")
     
-    if text_file:
-        name = os.path.basename(text_file)
-        window.title(name + " File saved - Bookster")
+def create_dirs():
+    
+    global path
+    
+    project_name = name_entry.get()
+    
+    if not project_name:
+        error_label = Label(name_window, text="Name cannot be empty!")
+        error_label.place(x = 88, y = 98)
         
-        text_file = open(text_file, 'w')
-        text_file.write(text_box.get(1.0, END))
+    else:
+        project_name = name_entry.get()
+        name_window.destroy()
+        user = os.getlogin()
+            
+        parent_dir = "C:/Users/" + user + "/Documents/Bookster"
+        path = os.path.join(parent_dir, project_name)
         
-        text_file.close
+        try:
+            os.mkdir(parent_dir)
+        except:
+            pass
+        try:
+            os.mkdir(path)
+        except:
+            pass
+        
+        os.chdir(path)
+        
+        text_file = open((project_name+".txt"), "w")
         
 # Save file
-def save_file():
-    """Function for saving text from the text box to a new file. If file is already open - changes are being saved. If nno file open - file is saved as new."""
+def save_project():
+    """Function for saving text from the text box to a new file. If file is already open - changes are being saved. If no file open - file is saved as new."""
     global open_name
     
     if  open_name:
@@ -96,9 +178,17 @@ def save_file():
         
         text_file.close
     else:
-        save_file_as()
+        text_file = filedialog.asksaveasfilename(initialdir="Documents", defaultextension=".txt", title = "Save file")
     
-    
+        if text_file:
+            name = os.path.basename(text_file)
+            window.title(name + " File saved - Bookster")
+            
+            text_file = open(text_file, 'w')
+            text_file.write(text_box.get(1.0, END))
+            
+            text_file.close
+       
 # Copy function
 def copy_text(shortcut):
     """Function that allows copying selected text."""
@@ -199,12 +289,16 @@ def underscore_text():
 # WIP Function that executes upon New Character button press
 def new_character():
     """Function that calls Character_sheet script upon button press."""
-    subprocess.call(["python", "Character Sheet.py"])
+    global init_path
+    
+    subprocess.call(["python", init_path +"/Character Sheet.py"])
 
 # Function that executes upon New Location button press
 def new_location():
     """Function that calls Location_sheet script upon button press."""
-    subprocess.call(["python", "Location_sheet.py"])
+    global init_path
+
+    subprocess.call(["python", init_path + "/Location_sheet.py"])
 
 # Display character information
 def display_char(event):
@@ -232,6 +326,9 @@ def display_loc(event):
 
 # WIP Function to refresh list of existing files
 def get_sheets():
+    
+    directory = os.getcwd()
+    
     characters = []
     locations = []
     for file in os.listdir(directory):
@@ -283,7 +380,10 @@ def generate_word():
     word_box.config(state=DISABLED)
     
 def set_target():
-    subprocess.call(["python", "set_writing_goal.py"])
+    
+    global init_path
+    
+    subprocess.call(["python", init_path + "\set_writing_goal.py"])
 
 # Toolbar
 tools_frame = Frame(window, bg = "#E4EAEA")
@@ -327,12 +427,12 @@ right_scrollbar.config(command = read_box.yview)
 
 # Dropboxes for character and location selection
 char_label = Label(text = "Character: ", bg = "#FAFDFD")
-character_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_char, values = characters, postcommand = get_sheets)
+character_dropbox = ttk.Combobox(widget_frame, values = characters, postcommand = get_sheets)
 character_dropbox["state"] = "readonly"
 character_dropbox.bind("<<ComboboxSelected>>", display_char)
 
 loc_label = Label(text = "Location: ", bg = "#FAFDFD")
-loc_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_loc, values = locations, postcommand = get_sheets)
+loc_dropbox = ttk.Combobox(widget_frame, values = locations, postcommand = get_sheets)
 loc_dropbox["state"] = "readonly"
 loc_dropbox.bind("<<ComboboxSelected>>", display_loc)
 
@@ -372,10 +472,9 @@ window.config(menu = menu_tab)
 # File
 file_menu = Menu(menu_tab, tearoff = False)
 menu_tab.add_cascade(label = "File", menu = file_menu)
-file_menu.add_command(label = "New", command = create_file)
-file_menu.add_command(label = "Open", command = open_file)
-file_menu.add_command(label = "Save", command = save_file)
-file_menu.add_command(label = "Save as", command = save_file_as)
+file_menu.add_command(label = "Create project", command = create_project)
+file_menu.add_command(label = "Open project", command = open_projects)
+file_menu.add_command(label = "Save project", command = save_project)
 file_menu.add_command(label = "Print", command = print_file)
 file_menu.add_command(label = "Exit", command = window.destroy)
 

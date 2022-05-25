@@ -21,12 +21,6 @@ def save():
     f.write(s)
     f.close()
     root.destroy()
-    
-    #save data in csv file
-    #with open('LocationFile.csv', 'a') as fs:
-        #w = csv.writer(fs, dialect='excel-tab')
-        #w.writerow([now.strftime("%d-%m-%Y %H:%M"), e1.get(),e2.get(),e3.get(),e4.get(),e5.get(),e6.get(),e7.get(),e8.get(),e9.get(),e10.get(),e11.get(),e12.get(),e13.get(),e14.get(),e15.get(),e16.get(),e17.get(),e18.get(),e19.get(),e20.get(),e21.get(),e22.get(),e23.get()])
-        #fs.close()
         
 def saveinfo():
     save()
