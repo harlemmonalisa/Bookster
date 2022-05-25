@@ -177,9 +177,12 @@ def save_project():
     """Function for saving changes to the project"""
     global file_name
     
-    text_file = open((file_name), "w")
-    text_file.write(text_box.get(1.0, END))
-    text_file.close
+    try:
+        text_file = open((file_name), "w")
+        text_file.write(text_box.get(1.0, END))
+        text_file.close
+    except:
+        pass
        
 # Copy function
 def copy_text(shortcut):
@@ -298,7 +301,7 @@ def new_location():
 def display_char(event):
     """Function displays contents of chosen character file on a screen"""
     
-    read_box.config(state=NORMAL) 
+    read_box.config(state=NORMAL)
     read_box.delete(1.0, END)         
     
     read_file = open("char_"+clicked_char.get()+".txt", "r").read()   
@@ -421,12 +424,12 @@ right_scrollbar.config(command = read_box.yview)
 
 # Dropboxes for character and location selection
 char_label = Label(text = "Character: ", bg = "#FAFDFD")
-character_dropbox = ttk.Combobox(widget_frame, values = characters, postcommand = get_sheets)
+character_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_char, values = characters, postcommand = get_sheets)
 character_dropbox["state"] = "readonly"
 character_dropbox.bind("<<ComboboxSelected>>", display_char)
 
 loc_label = Label(text = "Location: ", bg = "#FAFDFD")
-loc_dropbox = ttk.Combobox(widget_frame, values = locations, postcommand = get_sheets)
+loc_dropbox = ttk.Combobox(widget_frame, textvariable = clicked_loc, values = locations, postcommand = get_sheets)
 loc_dropbox["state"] = "readonly"
 loc_dropbox.bind("<<ComboboxSelected>>", display_loc)
 
