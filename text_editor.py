@@ -45,10 +45,9 @@ clicked_loc = StringVar()
 
 init_path = os.path.dirname(os.path.realpath(__file__))
 
-
 # Function to open a file
 def open_projects():
-    """Function that clears text box and displays contents of a newly chosen project. Default directory for files is set to Documents/Bookster/*Project* folder."""  
+    """Function opens a new window with a list ofd exisitng projects and calls display_project(). Default directory for files is set to Documents/Bookster/*Project* folder."""  
     global projects
     global projects_dropbox
     global open_project
@@ -68,7 +67,7 @@ def open_projects():
     projects_button.place(x = 10, y = 60)
     
 def get_projects():
-    
+    """Function checks all existing projects and displays them in a list"""
     global projects
     global projects_dropbox
     
@@ -83,7 +82,8 @@ def get_projects():
     projects_dropbox["values"] = projects
   
 def display_project():
-    
+    """Function dispalys contents of a txt file on the screen, calculates the amount of words written and checks for the word target.
+        It then displays word progress in the status bar"""
     global file_name
     user = os.getlogin()
     
@@ -113,7 +113,7 @@ def display_project():
 
 # Function to create new file
 def create_project():
-    """Function to create a new project. It clears existing text from the text box."""
+    """Function to create a new project. It opens a new window to specify project name and calls create_dirs()"""
     global name_window
     
     name_window = Tk()
@@ -141,7 +141,7 @@ def create_project():
         pass
     
 def create_dirs():
-    
+    """Function creates folders and files for a specified project name"""
     global path
     global project_name
     
@@ -174,7 +174,7 @@ def create_dirs():
         
 # Save file
 def save_project():
-    """Function for saving changes to the project"""
+    """Function for saving changes to the txt file in the project"""
     global file_name
     
     try:
@@ -237,7 +237,6 @@ def print_file():
     global file_name
     win32api.ShellExecute(0, "print", file_name, None, ".", 0)
 
-'''Need to save files in a different format that txt to get styling'''
 # Make text bold
 def bold_text():
     """Function that makes selected text bold or removes bold weight if the text was already bold."""
@@ -323,7 +322,7 @@ def display_loc(event):
 
 # WIP Function to refresh list of existing files
 def get_sheets():
-    
+    """Function loads created characters and locations into the respective comboboxes"""
     directory = os.getcwd()
     
     characters = []
@@ -357,6 +356,7 @@ def get_words(current_file):
         pass
     
 def generate_word():
+    """Function generates a random word and displays it in the text box"""
     #source where random words will be pulled from
     word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 
@@ -377,7 +377,7 @@ def generate_word():
     word_box.config(state=DISABLED)
     
 def set_target():
-    
+    """Function calls a subprocess to request word target for the project and saves it in the specific file"""
     global init_path
     
     subprocess.call(["python", init_path + "\set_writing_goal.py"])
